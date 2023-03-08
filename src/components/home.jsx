@@ -1,64 +1,45 @@
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import React, { useMemo, useRef, useState } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-
-const bottomData = [
-  {
-    athlete: 'Total',
-    age: '15 - 61',
-    country: 'Ireland',
-    year: '2020',
-    date: '26/11/1970',
-    sport: 'Synchronised Riding',
-    gold: 55,
-    silver: 65,
-    bronze: 12,
-  },
-];
+import React,{useState} from "react";
+import './home.css';
+import PullToRefresh from 'react-pull-to-refresh';
+import axios from "axios";
 
 const Home = () => {
 
-  const defaultColDef = useMemo(
-    () => ({
-      editable: true,
-      sortable: true,
-      resizable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 100,
-    }),
-    []
-  );
+    const [dummyData, setDummyData] = useState('Minesh');
 
-  const columnDefs = useMemo(
-    () => [
-      { field: 'athlete'},
-      { field: 'age'},
-      { field: 'country'},
-      { field: 'year'},
-      { field: 'date'},
-      { field: 'sport'},
-      {
-        headerName: 'Total',
-        field: 'total',
-        valueGetter: 'data.gold + data.silver + data.bronze',
-      },
-      { field: 'gold'},
-      { field: 'silver'},
-      { field: 'bronze'},
-    ],
-    []
-  );
+    const getData = (url) => {
+        return axios.get(url);
+    }
 
-  return (
-    <div style={{ flex: 'none', height: '60px' }}>
-        <AgGridReact
-          rowData={bottomData}
-          columnDefs={columnDefs}
-        />
-    </div>
-  );
-};
+    const apiData = async () => {
+        await getData('https://jsonplaceholder.typicode.com/posts').then((data) => {
+            setDummyData(data?.data)
+        })
+    }
+
+    const handleRefresh = async () => {
+        await apiData()
+    };
+
+    return (
+        <PullToRefresh onRefresh={handleRefresh} >
+            {typeof(dummyData) === 'object' ?
+                dummyData.map((data,key) =>
+                    <div key={key}>
+                        <div className="dynamic-data" key={key}>
+                            <div>Id:- {data.id}</div>
+                            <div>Body:- {data.body}</div>
+                            <div>Title:- {data.title}</div>
+                            <div>UserId:- {data.userId}</div>
+                        </div>
+                        <hr />
+                    </div>
+                )
+                :
+                <><span className="genericon genericon-next"></span><div className="genericon genericon-next dummy-class">Minesh</div></>
+            }
+        </PullToRefresh>
+    )
+}
 
 export default Home
