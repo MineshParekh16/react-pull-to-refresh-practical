@@ -16,6 +16,18 @@
     margin: 5px 0px;
     text-align: initial;
 }
+.ag-header-container {
+  width: 100% !important;
+}
+.ag-center-cols-container {
+  width: 100% !important;
+}
+.ag-header-row {
+  width: 100% !important;
+}
+.ag-header-cell {
+  width: 400px !important;
+}
 html,
 body {
   height: 100%;
